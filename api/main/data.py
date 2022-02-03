@@ -1,4 +1,4 @@
-[
+data = [
   {
     "rank": 1,
     "Name": "Tokyo",

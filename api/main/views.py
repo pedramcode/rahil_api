@@ -4,25 +4,20 @@ import requests
 from bs4 import BeautifulSoup
 from .serializers import ItemModelSerializer
 from .models import Item
-import json
+from . import data as cities_data
 
 
 class Reset(APIView):
 
     def put(self, request):
-        try:
             r_data = request.data
             if "password" not in r_data or r_data["password"] != "Pedi#0098":
                 return Response({"success": False, "err": "Unauthorized"}, status=401)
             Item.objects.all().delete()
-            with open("./data.json", "r") as f:
-                data = json.loads(f.read())
-            for row in data:
-                name = row["Name"]
+            for row in cities_data:
+                name = row["Name"].lower()
                 Item.objects.create(name=name)
             return Response({"success": True, "msg": f"Done"}, status=200)
-        except:
-            return Response({"success": False, "err": "Internal server error"}, status=500)
 
 
 
