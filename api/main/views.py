@@ -4,27 +4,23 @@ import requests
 from bs4 import BeautifulSoup
 from .serializers import ItemModelSerializer
 from .models import Item
+import json
 
 
-class ExtractWords(APIView):
+class Reset(APIView):
 
-    def post(self, request):
+    def put(self, request):
         try:
-            data = request.data
-            if "url" not in data:
-                return Response({"success": False, "err": "Pass the URL"}, status=400)
-            data = requests.get(data["url"])
-            text = data.text
-            soup = BeautifulSoup(text, features="html.parser")
-            for script in soup(["script", "style"]):
-                script.decompose()
-            strips = list(soup.stripped_strings)
-            added = 0
-            for word in strips:
-                if Item.objects.filter(name=word).count() == 0:
-                    Item.objects.create(name=word)
-                    added += 1
-            return Response({"success": True, "msg": f"{added} records fetched"}, status=200)
+            r_data = request.data
+            if "password" not in r_data or r_data["password"] != "Pedi#0098":
+                return Response({"success": False, "err": "Unauthorized"}, status=401)
+            Item.objects.all().delete()
+            with open("./data.json", "r") as f:
+                data = json.loads(f.read())
+            for row in data:
+                name = row["Name"]
+                Item.objects.create(name=name)
+            return Response({"success": True, "msg": f"Done"}, status=200)
         except:
             return Response({"success": False, "err": "Internal server error"}, status=500)
 

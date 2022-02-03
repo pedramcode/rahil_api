@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from main.views import ExtractWords, SearchWord
+from main.views import Reset, SearchWord
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('extract/', ExtractWords.as_view()),
+    path('reset/', Reset.as_view()),
     path('search/', SearchWord.as_view()),
 ]
